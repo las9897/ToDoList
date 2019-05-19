@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
+// 스키마 정의
 var todoSchema = new Schema({
     _id: {
         type: Object,

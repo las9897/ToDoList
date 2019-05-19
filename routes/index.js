@@ -1,6 +1,7 @@
 // routes/index.js
 
-var moment = require("moment");
+
+var moment = require("moment"); 
 var ObjectId = require("mongodb").ObjectID;
 
 module.exports = function(app, Todo) {
@@ -26,14 +27,8 @@ module.exports = function(app, Todo) {
 
     if (req.body.deadline != "") {
       var split_deadline = req.body.deadline.split("-");
-      if (split_deadline.length != 3) {
-        return res.json({
-          result: 0,
-          error: "Deadline Validation Error",
-          message: "Please according to the format YYYY(1970~2060)-MM(1~12)-DD(1~31)"
-        });
-      }
       if (
+        split_deadline.length != 3 ||
         split_deadline[0] < 1970 ||
         split_deadline[0] > 2060 ||
         split_deadline[1] < 1 ||
@@ -48,7 +43,6 @@ module.exports = function(app, Todo) {
         });
       }
     }
-
     todo.deadline = req.body.deadline;
     todo.priority = req.body.priority;
     todo.complete = req.body.complete;

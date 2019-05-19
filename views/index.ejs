@@ -19,7 +19,7 @@
   <script>
     $(document).on('click', '.ui.button.post', function () {
       var formdata = $('form[name=addTodoForm]').serialize();
-      var _this = $(this);
+      var _this = $(this); // ajax에서 사용할 this
       $.ajax({
         url: "/todo/add",
         type: "POST",
@@ -51,8 +51,6 @@
         success: function (result) {
           if (result['result'] == 1) {
             $('.ui.items').load(' .ui.items');
-          } else {
-
           }
         }
       });
@@ -70,8 +68,6 @@
         success: function (result) {
           if (result['result'] == 1) {
             $('.ui.items').load(' .ui.items');
-          } else {
-            alert(result['message']);
           }
         }
       });
@@ -91,8 +87,6 @@
         success: function (result) {
           if (result['result'] == 1) {
             $('.ui.items').load(' .ui.items');
-          } else {
-            alert(result['message']);
           }
         }
       });
@@ -151,7 +145,7 @@
       <div class="field">
         <div class="inline fields">
           <div class="two wide field">
-            <input type="text" name="deadline" placeholder="Deadline: YYYY-MM-DD">
+            <input type="date" name="deadline" >
           </div>
           <div class="two wide field">
             <select class="ui fluid search dropdown" name="priority">
@@ -246,9 +240,9 @@
         <div class="inline fields">
           <div class="two wide field">
             <% if(todo.deadline != null){ %>
-            <input type="text" name="deadline" placeholder="Deadline: YYYY-MM-DD" value="<%= moment(todo.deadline).format('YYYY-MM-DD') %>">
+            <input type="date" name="deadline" value="<%= moment(todo.deadline).format('YYYY-MM-DD') %>">
             <% }else{%>
-            <input type="text" name="deadline" placeholder="Deadline: YYYY-MM-DD">
+            <input type="date" name="deadline">
             <% } %>
           </div>
           <div class="two wide field">
