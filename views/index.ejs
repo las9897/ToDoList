@@ -151,7 +151,7 @@
       <div class="field">
         <div class="inline fields">
           <div class="two wide field">
-            <input type="text" name="deadline" placeholder="MM-DD">
+            <input type="text" name="deadline" placeholder="Deadline: YYYY-MM-DD">
           </div>
           <div class="two wide field">
             <select class="ui fluid search dropdown" name="priority">
@@ -197,10 +197,10 @@
         </div>
         <div>
           <% if(todo.deadline != null){ %>
-            <% if(moment(todo.deadline).format('MM-DD') > moment(new Date()).format('MM-DD')){ %>
-              <span class="meta" style="word-break: break-all"><%= moment(todo.deadline).format('MM-DD') %></span>
+            <% if(moment(todo.deadline).format('YYYY-MM-DD') > moment(new Date()).format('YYYY-MM-DD')){ %>
+              <span class="meta" style="word-break: break-all"><%= moment(todo.deadline).format('YYYY-MM-DD') %></span>
             <% }else{ %>
-              <font class="deadline_underline"><u><span class="meta" style="word-break: break-all"><%= moment(todo.deadline).format('MM-DD') %></span></u></font>
+              <font class="deadline_underline"><u><span class="meta" style="word-break: break-all"><%= moment(todo.deadline).format('YYYY-MM-DD') %></span></u></font>
             <% }%>
           <% } %>
         </div>
@@ -246,9 +246,9 @@
         <div class="inline fields">
           <div class="two wide field">
             <% if(todo.deadline != null){ %>
-            <input type="text" name="deadline" placeholder="MM-DD" value="<%= moment(todo.deadline).format('MM-DD') %>">
+            <input type="text" name="deadline" placeholder="Deadline: YYYY-MM-DD" value="<%= moment(todo.deadline).format('YYYY-MM-DD') %>">
             <% }else{%>
-            <input type="text" name="deadline" placeholder="MM-DD">
+            <input type="text" name="deadline" placeholder="Deadline: YYYY-MM-DD">
             <% } %>
           </div>
           <div class="two wide field">
