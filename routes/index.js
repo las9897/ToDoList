@@ -9,7 +9,7 @@ module.exports = function(app, Todo) {
     Todo.find(function(err, todos) {
       if (err) return res.status(500).send({ error: "database failure" });
       res.render("index", { todos: todos, moment });
-    });
+    }).sort({_id : -1});
   });
 
   app.post("/todo/add", function(req, res) {
