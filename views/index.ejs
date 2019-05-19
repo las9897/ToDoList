@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title></title>
+  <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+  <link rel="stylesheet" type="text/css"
+    href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.2.9/semantic.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <style>
+    .checked {
+      color: orange;
+    }
+    .deadline_underline{
+      color: red;
+    }
+  </style>
+
+  <script>
+    $(document).on('click', '.ui.button.post', function () {
+      var formdata = $('form[name=addTodoForm]').serialize();
+      var _this = $(this);
+      $.ajax({
+        url: "/todo/add",
+        type: "POST",
+        dataType: "json",
+        data: formdata,
+        success: function (result) {
+          if (result['result'] == 1) {
+            _this.closest('.ui.form.error').find('#error_msg').hide();
+            $('.ui.items').load(' .ui.items');
+            $('form[name=addTodoForm]')[0].reset();
+          } else {
+            _this.closest('.ui.form.error').find('#error_msg > div').text(result['error']);
+            _this.closest('.ui.form.error').find('#error_msg > p').text(result['message']);
+            _this.closest('.ui.form.error').find('#error_msg').show();
+          }
+        }
+      });
+    });
+
+    $(document).on('click', '.ui.button.complete', function () {
+      $.ajax({
+        url: "/todo/complete",
+        type: "PUT",
+        dataType: "json",
+        data: {
+          _id: $(this).closest('.extra').find('input[name=_id]').val(),
+          complete: true
+        },
+        success: function (result) {
+          if (result['result'] == 1) {
+            $('.ui.items').load(' .ui.items');
+          } else {
+
+          }
+        }
+      });
+    });
+
+    $(document).on('click', '.ui.button.undo', function () {
+      $.ajax({
+        url: "/todo/complete",
+        type: "PUT",
+        dataType: "json",
+        data: {
+          _id: $(this).closest('.extra').find('input[name=_id]').val(),
+          complete: false
+        },
+        success: function (result) {
+          if (result['result'] == 1) {
+            $('.ui.items').load(' .ui.items');
+          } else {
+            alert(result['message']);
+          }
+        }
+      });
+    });
+
+    $(document).on('click', '.ui.button.edit', function () {
+      $(this).closest('.item').hide();
+      $(this).closest('.item').next().show();
+    });
+
+    $(document).on('click', '.ui.button.delete', function () {
+      $.ajax({
+        url: "/todo/delete",
+        type: "DELETE",
+        dataType: "json",
+        data: { _id: $(this).closest('.extra').find('input[name=_id]').val() },
+        success: function (result) {
+          if (result['result'] == 1) {
+            $('.ui.items').load(' .ui.items');
+          } else {
+            alert(result['message']);
+          }
+        }
+      });
+    });
+
+    $(document).on('click', '.ui.button.patch', function () {
+      var formdata = $(this).closest('form').serialize();
+      var _this = $(this);
+      $.ajax({
+        url: "/todo/patch",
+        type: "PATCH",
+        dataType: "json",
+        data: formdata,
+        success: function (result) {
+          if (result['result'] == 1) {
+            $('.ui.items').load(' .ui.items');
+          } else {
+            _this.closest('.ui.form.error').find('#error_msg > div').text(result['error']);
+            _this.closest('.ui.form.error').find('#error_msg > p').text(result['message']);
+            _this.closest('.ui.form.error').find('#error_msg').show();
+          }
+        }
+      });
+
+    });
+
+    $(document).on('click', '.ui.button.cancel', function () {
+      $(this).closest('.ui.form.error').hide();
+      $(this).closest('.ui.form.error').prev().show();
+    });
+
+
+
+  </script>
+
+</head>
+
+<body>
+  <div>
+    <h1>Summer Coding To Do List</h1>
+    <hr>
+  </div>
+  <div>
+    <form name="addTodoForm" class="ui form error">
+      <div class="field">
+        <input type="text" name="title" placeholder="Title">
+      </div>
+      <div class="field">
+        <textarea rows="2" placeholder="Content" name="content"></textarea>
+      </div>
+      <div id="error_msg" class="ui error message" style="display: none">
+        <div class="header"></div>
+        <p></p>
+      </div>
+
+      <div class="field">
+        <div class="inline fields">
+          <div class="two wide field">
+            <input type="text" name="deadline" placeholder="MM-DD">
+          </div>
+          <div class="two wide field">
+            <select class="ui fluid search dropdown" name="priority">
+              <option value="0">Priority</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+            </select>
+          </div>
+          <div class="ui icon buttons">
+            <button type="button" class="ui button post">
+              <i class="plus icon"></i>
+            </button>
+          </div>
+          <input type="hidden" name="complete" value="false">
+        </div>
+      </div>
+    </form>
+
+  </div>
+  <div>
+    <hr>
+  </div>
+
+
+  <div class="ui items">
+    <% todos.sort().forEach(function(todo){ %>
+    <div id="item" class="item">
+
+      <div class="middle aligned content title">
+        <div><% for(var i=0; i<todo.priority; i++){ %>
+          <span class="fa fa-star checked"></span>
+          <% } %>
+        </div>
+        <div>
+          <% if(todo.complete == false){ %>
+          <h3 style="word-break: break-all"><%=todo.title%></h3>
+          <% }else{ %>
+          <h3 style="word-break: break-all"><del><%=todo.title%></del></h3>
+          <% } %>
+        </div>
+        <div>
+          <% if(todo.deadline != null){ %>
+            <% if(moment(todo.deadline).format('MM-DD') > moment(new Date()).format('MM-DD')){ %>
+              <span class="meta" style="word-break: break-all"><%= moment(todo.deadline).format('MM-DD') %></span>
+            <% }else{ %>
+              <font class="deadline_underline"><u><span class="meta" style="word-break: break-all"><%= moment(todo.deadline).format('MM-DD') %></span></u></font>
+            <% }%>
+          <% } %>
+        </div>
+        <div class="extra" style="word-break: break-all; display: block;">
+          <input type="hidden" name="_id" value="<%= todo._id %>">
+          <input type="hidden" name="complete" value="<%= todo.complete %>">
+          <p><%= todo.content %></p>
+          <div class="ui icon buttons">
+            <% if(todo.complete == false){%>
+            <button class="ui button complete">
+              <i class="check icon"></i>
+            </button>
+            <button type="button" class="ui button edit">
+                <i class="edit icon"></i>
+              </button>
+            <% }else{ %>
+            <button class="ui button undo">
+              <i class="reply alternate icon"></i>
+            </button>
+            <% } %>
+            
+            <button type="button" class="ui button delete">
+              <i class="trash alternate icon"></i>
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+    <form class="ui form error" style="display: none">
+      <div class="field">
+        <input type="text" name="title" placeholder="Title" value="<%= todo.title %>">
+      </div>
+      <div class="field">
+        <textarea rows="2" placeholder="Content" name="content"><%= todo.content %></textarea>
+      </div>
+      <div id="error_msg" class="ui error message" style="display: none">
+        <div class="header">Action Forbidden</div>
+        <p>You can only sign up for an account once with a given e-mail address.</p>
+      </div>
+      <div class="field">
+        <div class="inline fields">
+          <div class="two wide field">
+            <% if(todo.deadline != null){ %>
+            <input type="text" name="deadline" placeholder="MM-DD" value="<%= moment(todo.deadline).format('MM-DD') %>">
+            <% }else{%>
+            <input type="text" name="deadline" placeholder="MM-DD">
+            <% } %>
+          </div>
+          <div class="two wide field">
+            <select id="selectBox" class="ui fluid search dropdown" name="priority">
+              <option value="0">Priority</option>
+              <% for ( var i = 1; i < 6; i++ ){ 
+                  var selected = (i == todo.priority) ? "selected" : "";%>
+              <option value="<%=i%>" <%=selected %>><%=i %></option>
+              <% }%>
+            </select>
+          </div>
+          <div class="ui icon buttons">
+            <button type="button" class="ui button patch">
+              <i class="check icon"></i>
+            </button>
+            <button type="button" class="ui button cancel">
+              <i class="reply icon"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <input type="hidden" name="_id" value="<%= todo._id %>">
+      <input type="hidden" name="complete" value="<%= todo.complete %>">
+    </form>
+
+
+
+    <hr>
+    <% }) %>
+  </div>
+
+</body>
+
+</html>
