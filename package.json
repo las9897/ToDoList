@@ -1,0 +1,28 @@
+{
+  "name": "todolist",
+  "version": "1.0.0",
+  "description": "2019 Summer Coding To Do List",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/las9897/ToDoList.git"
+  },
+  "author": "JeJe",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/las9897/ToDoList/issues"
+  },
+  "homepage": "https://github.com/las9897/ToDoList#readme",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "ejs": "~2.6.1",
+    "express": "^4.16.4",
+    "express-session": "^1.16.1",
+    "jquery": "^3.4.1",
+    "moment": "^2.24.0",
+    "mongoose": "^5.5.8"
+  }
+}
