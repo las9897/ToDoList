@@ -1,8 +1,7 @@
 # 2019 Summer Coding To Do List
 
 ## Notice
-서버를 실수로 닫음으로 인해 IP 주소 변경  
-http://15.164.96.143:8080/todo
+Server Closed
 
 
 ## nodejs, npm install
